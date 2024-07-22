@@ -55,6 +55,24 @@ with open(os.path.join(package_dir, 'setup.py'), 'w') as f:
     f.write(setup_code)
 
 
+import os
+import subprocess
+
+def build_llama_cpp_wheel():
+    try:
+        # Change to the llama_cpp_package directory
+        os.chdir("llama_cpp_package")  # Adjust the directory if needed
+        
+        # Run the build wheel command
+        subprocess.run(["python", "setup.py", "bdist_wheel"], check=True)
+
+        print("Successfully built bdist_wheel in llama_cpp_package!")
+    except (FileNotFoundError, subprocess.CalledProcessError) as error:
+        print(f"An error occurred: {error}")
+
+build_llama_cpp_wheel()
+
+
  # Move the wheel to a shared location (e.g., Google Drive)
 import shutil
 
