@@ -96,6 +96,125 @@ source myenv/bin/activate
     ```
 
 
+# Llama.cpp Packages Installation
+
+Here is a detailed step-by-step tutorial on creating a `.whl` file for the `llama.cpp` project with all the binaries included. This tutorial assumes you are working in a Python virtual environment and have access to a computer with internet.
+
+1. **Set up the environment and clone the repository:**
+
+   ```bash
+   # Create and activate the virtual environment
+   python3.9 -m venv myenv
+   source myenv/bin/activate
+
+   # Clone the llama.cpp repository
+   git clone https://github.com/ggerganov/llama.cpp
+   cd llama.cpp
+   ```
+
+2. **Compile the binaries:**
+   
+   Follow the instructions in the `llama.cpp` repository to compile the binaries. For example:
+
+   ```bash
+   # Replace with actual build commands from the repository
+   make
+   ```
+
+3. **Create a Python package directory structure:**
+
+   ```python
+   import os
+   import shutil
+
+   # Define package directory
+   package_dir = 'llama_cpp_package'
+   binaries_dir = os.path.join(package_dir, 'bin')
+   os.makedirs(binaries_dir, exist_ok=True)
+
+   # List of compiled binaries
+   binaries = [
+       'llama-convert-llama2c-to-ggml', 'llama-server', 'llama-simple', 'llama-speculative',
+       'llama-tokenize', 'llama-export-lora', 'llama-train-text-from-scratch', 'llama-vdot',
+       'llama-eval-callback', 'llama-gguf', 'llama-gguf-hash', 'llama-gguf-split',
+       'llama-gritlm', 'llama-imatrix', 'llama-infill', 'llama-llava-cli', 'llama-lookahead',
+       'llama-lookup', 'llama-lookup-create', 'llama-lookup-merge', 'llama-lookup-stats',
+       'llama-parallel', 'llama-passkey', 'llama-perplexity', 'llama-q8dot', 'llama-quantize',
+       'llama-quantize-stats', 'llama-retrieval', 'llama-save-load-state'
+   ]
+
+   # Move binaries to the binaries directory
+   for binary in binaries:
+       shutil.move(binary, os.path.join(binaries_dir, binary))
+
+   # Create the setup.py file
+   setup_code = """
+   from setuptools import setup, find_packages
+   import os
+
+   def package_files(directory):
+       paths = []
+       for (path, directories, filenames) in os.walk(directory):
+           for filename in filenames:
+               paths.append(os.path.join(path, filename))
+       return paths
+
+   extra_files = package_files('bin')
+
+   setup(
+       name='llama_cpp_package',
+       version='0.1',
+       packages=find_packages(),
+       include_package_data=True,
+       package_data={
+           '': extra_files,
+       },
+       data_files=[('', extra_files)],
+       install_requires=[],
+   )
+   """
+
+   # Write setup.py to the package directory
+   os.makedirs(package_dir, exist_ok=True)
+   with open(os.path.join(package_dir, 'setup.py'), 'w') as f:
+       f.write(setup_code)
+   ```
+
+4. **Build the wheel file:**
+
+   ```bash
+   cd llama_cpp_package
+   python setup.py bdist_wheel
+   ```
+
+5. **Locate the `.whl` file:**
+
+   The built wheel file will be located in the `dist` directory. You can move this file to a shared location for offline installation.
+
+   ```bash
+   # Move the wheel file to a shared location (e.g., USB drive, shared folder)
+   dist_files=$(ls dist/*.whl)
+   for file in $dist_files; do
+       cp $file /path/to/shared/location/
+   done
+   ```
+
+6. **Install the wheel file on the offline computer:**
+
+   Copy the `.whl` file to the offline computer and install it using `pip`.
+
+   ```bash
+   # Copy the wheel file to the offline computer
+
+   # Activate the virtual environment on the offline computer
+   python3.9 -m venv myenv
+   source myenv/bin/activate
+
+   # Install the wheel file
+   pip install /path/to/copied/llama_cpp_package-0.1-py3-none-any.whl
+   ```
+
+By following these steps, you will be able to create a wheel file with all the binaries of the `llama.cpp` project and install it on an offline computer.
 
 
 # llama python cpp
