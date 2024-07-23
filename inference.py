@@ -9,12 +9,13 @@ def run_llama_cpp_inference(prompt, repo_id, filename, n_predict=256, top_k=40, 
     if not os.path.exists(llama_cpp_executable):
         raise FileNotFoundError(f"llama.cpp executable not found: {llama_cpp_executable}")
 
-    if not os.path.exists(filename):
+    model_path = os.path.join("./models", filename)  # Define the model path
+    
+    if not os.path.exists(model_path):
         print(f"Downloading model '{filename}'...")
-        model_path = hf_hub_download(repo_id=repo_id, filename=filename)
+        model_path = hf_hub_download(repo_id=repo_id, filename=filename, cache_dir="./models")
     else:
         print(f"Using locally cached model '{filename}'")
-        model_path = filename
 
     try:
         result = subprocess.run([
