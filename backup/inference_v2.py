@@ -1,15 +1,6 @@
 import subprocess
 import os
-import requests
-
-def download_model(repo_id, filename, target_path):
-    """Downloads a model file from Hugging Face Hub."""
-    base_url = f"https://huggingface.co/{repo_id}/resolve/main/{filename}"
-    response = requests.get(base_url)
-    response.raise_for_status()  # Ensure the request was successful
-    with open(target_path, "wb") as f:
-        f.write(response.content)
-    print(f"Model downloaded to '{target_path}'")
+from huggingface_hub import hf_hub_download
 
 def run_llama_cpp_inference(prompt, repo_id, filename, n_predict=256, top_k=40, temperature=0.7):
     """Runs inference using llama.cpp for a single prompt."""
@@ -18,13 +9,11 @@ def run_llama_cpp_inference(prompt, repo_id, filename, n_predict=256, top_k=40, 
     if not os.path.exists(llama_cpp_executable):
         raise FileNotFoundError(f"llama.cpp executable not found: {llama_cpp_executable}")
 
-    model_dir = "./models"
-    os.makedirs(model_dir, exist_ok=True)
-    model_path = os.path.join(model_dir, filename)
+    model_path = os.path.join("./models", filename)  # Define the model path
     
     if not os.path.exists(model_path):
         print(f"Downloading model '{filename}'...")
-        download_model(repo_id, filename, model_path)
+        model_path = hf_hub_download(repo_id=repo_id, filename=filename, cache_dir="./models")
     else:
         print(f"Using locally cached model '{filename}'")
 
