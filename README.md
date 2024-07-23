@@ -254,8 +254,8 @@ def run_llama_cpp_inference(prompt, repo_id, filename, n_predict=256, top_k=40, 
 
 # Example usage
 prompt = "What is the capital of Italy?"
-repo_id = "your-repo-id"
-filename = "model_filename.gguf"
+repo_id = "instructlab/granite-7b-lab-GGUF"
+filename = "granite-7b-lab-Q4_K_M.gguf"
 
 output = run_llama_cpp_inference(prompt, repo_id, filename)
 print(f"Prompt: {prompt}\nResponse: {output}")
